@@ -370,24 +370,23 @@ const createLoadMoreButtonTemplate = () => {
 };
 
 const render = (container, template, targetPlace) => {
-  console.log(container, 'container')
   container.insertAdjacentHTML(targetPlace, template);
 };
 
-const siteMain = document.querySelector('.main');
-const siteMainSection = siteMain.querySelector('.main__control');
+const siteMain = document.querySelector(`.main`);
+const siteMainSection = siteMain.querySelector(`.main__control`);
 
-render(siteMainSection, createSiteMenuTemplate(), 'beforeend');
-render(siteMain, createFilterTemplate(), 'beforeend');
-render(siteMain, createSortTemplate(), 'beforeend');
+render(siteMainSection, createSiteMenuTemplate(), `beforeend`);
+render(siteMain, createFilterTemplate(), `beforeend`);
+render(siteMain, createSortTemplate(), `beforeend`);
 
-const taskList = siteMain.querySelector('.board__tasks');
-const boardElement = siteMain.querySelector('.board');
+const taskList = siteMain.querySelector(`.board__tasks`);
+const boardElement = siteMain.querySelector(`.board`);
 
-render(taskList, createTaskFormEditTemplate(), 'beforeend');
+render(taskList, createTaskFormEditTemplate(), `beforeend`);
 
 for (let i = 0; i < TASK_COUNT; i++) {
-  render(taskList, createTaskCardTemplate(), 'beforeend');
-};
+  render(taskList, createTaskCardTemplate(), `beforeend`);
+}
 
-render(boardElement, createLoadMoreButtonTemplate(), 'beforeend');
+render(boardElement, createLoadMoreButtonTemplate(), `beforeend`);
