@@ -1,4 +1,6 @@
-* text eol=lf
+# Файлы и папки операционной системы
+.DS_Store
+Thumbs.db
 
 *.png binary
 *.jpg binary
@@ -6,8 +8,16 @@
 *.webp binary
 *.woff binary
 *.woff2 binary
+
+# Файлы редактора
+.idea
+*.sublime*
+.vscode
+
+# Вспомогательные файлы
+*.log*
 node_modules/
 
-
+# Файлы сборки (допишите самостоятельно)
 public/*.js
 public/*.js.map
