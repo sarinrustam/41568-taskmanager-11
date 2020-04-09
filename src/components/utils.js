@@ -1,3 +1,15 @@
-export const render = (container, template, targetPlace) => {
+const castTimeFormat = (value) => {
+  return value < 10 ? `0${value}` : String(value);
+};
+
+const formatTime = (date) => {
+  const hours = castTimeFormat(date.getHours() % 12);
+  const minutes = castTimeFormat(date.getMinutes());
+  return `${hours}:${minutes}`;
+};
+
+const render = (container, template, targetPlace) => {
   container.insertAdjacentHTML(targetPlace, template);
 };
+
+export {formatTime, render};
