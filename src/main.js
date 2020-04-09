@@ -1,6 +1,5 @@
 
 import {renderMenu} from '@components/menu.js';
-import {render} from '@components/utils.js';
 import {renderFilter} from '@components/filter.js';
 import {renderSort} from '@components/sort.js';
 import {renderCard} from '@components/card.js';
@@ -33,10 +32,6 @@ const init = function () {
 
   cards.slice(1, showingTasksCount)
     .forEach((task) => renderCard(task, taskList));
-
-  // for (let i = 1; i < showingTasksCount; i++) {
-  //   renderCard(cards[i], taskList);
-  // }
 
   renderMoreButton(boardElement);
 
