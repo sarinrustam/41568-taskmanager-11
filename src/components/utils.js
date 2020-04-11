@@ -1,5 +1,9 @@
+const getRandomNumber = function () {
+  return Math.floor(Math.random() * 10);
+};
+
 const castTimeFormat = (value) => {
-  return value < 10 ? `0${value}` : String(value);
+  return value < 10 ? `0${value}` : value.toString();
 };
 
 const formatTime = (date) => {
@@ -12,4 +16,4 @@ const render = (container, template, targetPlace) => {
   container.insertAdjacentHTML(targetPlace, template);
 };
 
-export {formatTime, render};
+export {formatTime, render, getRandomNumber};

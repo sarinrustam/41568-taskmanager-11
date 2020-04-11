@@ -1,8 +1,8 @@
-import {render} from '@components/utils.js';
-import {MONTH_NAMES} from '@components/const.js';
+
+import {MONTH_NAMES} from '@components/constants.js';
 import {formatTime} from '@components/utils.js';
 
-const renderCard = function (card, container) {
+const renderCard = function (card) {
   const {description, dueDate, color, repeatingDays, isArchive, isFavorite} = card;
 
   const isExpired = dueDate instanceof Date && dueDate < Date.now();
@@ -11,26 +11,21 @@ const renderCard = function (card, container) {
   const date = isDateShowing ? `${dueDate.getDate()} ${MONTH_NAMES[dueDate.getMonth()]}` : ``;
   const time = isDateShowing ? formatTime(dueDate) : ``;
 
-  const repeatClass = Object.values(repeatingDays).some(Boolean) ? `card--repeat` : ``;
-  const deadlineClass = isExpired ? `card--deadline` : ``;
-  const archiveButtonInactiveClass = isArchive ? `` : `card__btn--disabled`;
-  const favoriteButtonInactiveClass = isFavorite ? `` : `card__btn--disabled`;
-
   const createTemplate = () => {
     return (
-      `<article class="card card--${color} ${repeatClass} ${deadlineClass}">
+      `<article class="card card--${color} ${Object.values(repeatingDays).some((x) => x) ? `card--repeat` : ``} ${isExpired ? `card--deadline` : ``}">
       <div class="card__form">
         <div class="card__inner">
           <div class="card__control">
             <button type="button" class="card__btn card__btn--edit">
               edit
             </button>
-            <button type="button" class="card__btn card__btn--archive ${archiveButtonInactiveClass}">
+            <button type="button" class="card__btn card__btn--archive ${isArchive ? `` : `card__btn--disabled`}">
               archive
             </button>
             <button
               type="button"
-              class="card__btn card__btn--favorites ${favoriteButtonInactiveClass}"
+              class="card__btn card__btn--favorites ${isFavorite ? `` : `card__btn--disabled`}"
             >
               favorites
             </button>
@@ -63,7 +58,8 @@ const renderCard = function (card, container) {
     </article>`
     );
   };
-  render(container, createTemplate(), `beforeend`);
+
+  return createTemplate();
 };
 
 export {renderCard};

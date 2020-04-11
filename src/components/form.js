@@ -1,5 +1,5 @@
 import {render, formatTime} from '@components/utils.js';
-import {MONTH_NAMES, DAYS, COLORS} from '@components/const.js';
+import {MONTH_NAMES, DAYS, COLORS} from '@components/constants.js';
 
 const createColorsMarkup = (colors, currentColor) => {
   return colors
