@@ -1,9 +1,9 @@
 import {getRandomNumber} from '@components/utils.js';
 
-const filterNames = [`all`, `overdue`, `today`, `favorites`, `repeating`, `archive`];
+const FILTER_NAMES = [`all`, `overdue`, `today`, `favorites`, `repeating`, `archive`];
 
 const generateFilters = () => {
-  return filterNames.map((it) => {
+  return FILTER_NAMES.map((it) => {
     return {
       name: it,
       count: getRandomNumber(),

@@ -7,10 +7,8 @@ import {generateFilters} from '@components/mock/filter.js';
 import {generateCards} from '@components/mock/card.js';
 
 const init = function () {
-  const TASK_COUNT = 22;
-
   const filters = generateFilters();
-  const cards = generateCards(TASK_COUNT);
+  const cards = generateCards();
 
   const siteMain = document.querySelector(`.main`);
   const siteMainSection = siteMain.querySelector(`.main__control`);

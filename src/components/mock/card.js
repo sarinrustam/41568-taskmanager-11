@@ -1,5 +1,7 @@
 import {COLORS} from '@components/constants.js';
 
+const TASK_COUNT = 22;
+
 const DescriptionItems = [
   `Изучить теорию`,
   `Сделать домашку`,
@@ -55,8 +57,8 @@ const generateCard = () => {
   };
 };
 
-const generateCards = (count) => {
-  return new Array(count)
+const generateCards = () => {
+  return new Array(TASK_COUNT)
     .fill(``)
     .map(generateCard);
 };

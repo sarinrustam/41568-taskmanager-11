@@ -21,7 +21,7 @@ const initMoreButton = function (boardElement) {
 };
 
 const hideMoreButton = function () {
-  loadMoreButton.remove();
+  loadMoreButton.classList.add(`visually-hidden`);
 };
 
 export {renderMoreButton, initMoreButton, hideMoreButton};

@@ -1,12 +1,12 @@
-const castFormatNumber = 10;
-const multiplier = 10;
+const CAST_FORMAT_NUMBER = 10;
+const MULTIPLIER = 10;
 
 const getRandomNumber = function () {
-  return Math.floor(Math.random() * multiplier);
+  return Math.floor(Math.random() * MULTIPLIER);
 };
 
 const castTimeFormat = (value) => {
-  return value < castFormatNumber ? `0${value}` : value.toString();
+  return value < CAST_FORMAT_NUMBER ? `0${value}` : value.toString();
 };
 
 const formatTime = (date) => {
