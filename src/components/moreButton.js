@@ -1,4 +1,7 @@
 import {render} from '@components/utils.js';
+import {showMoreCards} from '@components/cards.js';
+
+let loadMoreButton;
 
 const renderMoreButton = function (container) {
   const createTemplate = () => {
@@ -9,4 +12,16 @@ const renderMoreButton = function (container) {
   render(container, createTemplate(), `beforeend`);
 };
 
-export {renderMoreButton};
+const initMoreButton = function (boardElement) {
+  loadMoreButton = boardElement.querySelector(`.load-more`);
+
+  loadMoreButton.addEventListener(`click`, () =>{
+    showMoreCards();
+  });
+};
+
+const hideMoreButton = function () {
+  loadMoreButton.classList.add(`visually-hidden`);
+};
+
+export {renderMoreButton, initMoreButton, hideMoreButton};
