@@ -1,22 +1,41 @@
 const CAST_FORMAT_NUMBER = 10;
 const MULTIPLIER = 10;
 
-const getRandomNumber = function () {
+export const RenderPosition = {
+  AFTERBEGIN: `afterbegin`,
+  BEFOREEND: `beforeend`
+};
+
+export const getRandomNumber = function () {
   return Math.floor(Math.random() * MULTIPLIER);
 };
 
-const castTimeFormat = (value) => {
+export const castTimeFormat = (value) => {
   return value < CAST_FORMAT_NUMBER ? `0${value}` : value.toString();
 };
 
-const formatTime = (date) => {
+export const formatTime = (date) => {
   const hours = castTimeFormat(date.getHours() % 12);
   const minutes = castTimeFormat(date.getMinutes());
   return `${hours}:${minutes}`;
 };
 
-const render = (container, template, targetPlace) => {
-  container.insertAdjacentHTML(targetPlace, template);
+export const createElement = (template) => {
+  const element = document.createElement(`div`);
+
+  element.innerHTML = template;
+
+  return element.firstChild;
 };
 
-export {formatTime, render, getRandomNumber};
+export const render = function (container, element, place) {
+  switch (place) {
+    case RenderPosition.AFTERBEGIN:
+      container.prepend(element);
+      break;
+
+    case RenderPosition.BEFOREEND:
+      container.append(element);
+      break;
+  }
+};

@@ -1,9 +1,9 @@
 
 import {MONTH_NAMES} from '@components/constants.js';
-import {formatTime} from '@components/utils.js';
+import {formatTime, createElement} from '@components/utils.js';
 
-const renderCard = function (card) {
-  const {description, dueDate, color, repeatingDays, isArchive, isFavorite} = card;
+const createTemplate = function (data) {
+  const {description, dueDate, color, repeatingDays, isArchive, isFavorite} = data;
 
   const isExpired = dueDate instanceof Date && dueDate < Date.now();
   const isDateShowing = !!dueDate;
@@ -11,21 +11,26 @@ const renderCard = function (card) {
   const date = isDateShowing ? `${dueDate.getDate()} ${MONTH_NAMES[dueDate.getMonth()]}` : ``;
   const time = isDateShowing ? formatTime(dueDate) : ``;
 
-  const createTemplate = () => {
-    return (
-      `<article class="card card--${color} ${Object.values(repeatingDays).some((x) => x) ? `card--repeat` : ``} ${isExpired ? `card--deadline` : ``}">
+  const repeatingClass = Object.values(repeatingDays).some((x) => x) ? `card--repeat` : ``;
+  const deadlineClass = isExpired ? `card--deadline` : ``;
+
+  const disabledAchiveClass = isArchive ? `` : `card__btn--disabled`;
+  const disabledFavoriteClass = isFavorite ? `` : `card__btn--disabled`;
+
+  return (
+    `<article class="card card--${color} ${repeatingClass} ${deadlineClass}">
       <div class="card__form">
         <div class="card__inner">
           <div class="card__control">
             <button type="button" class="card__btn card__btn--edit">
               edit
             </button>
-            <button type="button" class="card__btn card__btn--archive ${isArchive ? `` : `card__btn--disabled`}">
+            <button type="button" class="card__btn card__btn--archive ${disabledAchiveClass}">
               archive
             </button>
             <button
               type="button"
-              class="card__btn card__btn--favorites ${isFavorite ? `` : `card__btn--disabled`}"
+              class="card__btn card__btn--favorites ${disabledFavoriteClass}"
             >
               favorites
             </button>
@@ -56,10 +61,28 @@ const renderCard = function (card) {
         </div>
       </div>
     </article>`
-    );
-  };
-
-  return createTemplate();
+  );
 };
 
-export {renderCard};
+export default class Card {
+  constructor(data) {
+    this._data = data;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createTemplate(this._data);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
