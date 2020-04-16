@@ -18,16 +18,18 @@ export default class Cards {
     this._element = null;
     this._form = null;
     this._moreButton = null;
+    this._activeCard = null;
     this._showingTasksCount = SHOWING_TASKS_COUNT_ON_START;
   }
 
   init() {
-    this._form = new Form(this._data[0]);
-    render(this._element, this._form.getElement(), RenderPosition.BEFOREEND);
-    this.renderCards(this._data.slice(1, this._showingTasksCount));
+
+    // render(this._element, this._form.getElement(), RenderPosition.BEFOREEND);
+    this.renderCards(this._data.slice(0, this._showingTasksCount));
 
     this._moreButton = new MoreButton();
     render(this._element.parentNode, this._moreButton.getElement(), RenderPosition.BEFOREEND);
+
     this._moreButton._element.addEventListener(`click`, () => {
       this.showMoreCards();
     });
@@ -54,6 +56,26 @@ export default class Cards {
       const card = new Card(it);
 
       render(this._element, card.getElement(), RenderPosition.BEFOREEND);
+
+      card._editButton = card._element.querySelector(`.card__btn--edit`);
+      card._editButton.addEventListener(`click`, () => {
+        if (this._form && this._activeCard) {
+          this._form._element.parentNode.replaceChild(this._activeCard._element, this._form._element);
+        }
+
+        this._form = new Form(it);
+        this._activeCard = card;
+        card._element.parentNode.replaceChild(this._form.getElement(), card._element);
+
+        this._form._element.addEventListener(`submit`, () => {
+          if (this._form && this._activeCard) {
+            this._form._element.parentNode.replaceChild(this._activeCard._element, this._form._element);
+
+            this._form = null;
+            this._activeCard = null;
+          }
+        });
+      });
     });
   }
 

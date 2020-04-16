@@ -68,6 +68,7 @@ export default class Card {
   constructor(data) {
     this._data = data;
     this._element = null;
+    this._editButton = null;
   }
 
   getTemplate() {
