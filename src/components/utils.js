@@ -1,6 +1,12 @@
 const CAST_FORMAT_NUMBER = 10;
 const MULTIPLIER = 10;
 
+export const Buttons = {
+  LMB: 0,
+  ENT: `Enter`,
+  ESC: `Escape`,
+};
+
 export const RenderPosition = {
   AFTERBEGIN: `afterbegin`,
   BEFOREEND: `beforeend`

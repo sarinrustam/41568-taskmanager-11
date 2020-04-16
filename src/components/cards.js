@@ -58,6 +58,7 @@ export default class Cards {
       render(this._element, card.getElement(), RenderPosition.BEFOREEND);
 
       card._editButton = card._element.querySelector(`.card__btn--edit`);
+
       card._editButton.addEventListener(`click`, () => {
         if (this._form && this._activeCard) {
           this._form._element.parentNode.replaceChild(this._activeCard._element, this._form._element);
