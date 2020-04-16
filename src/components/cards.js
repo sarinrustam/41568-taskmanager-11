@@ -1,7 +1,7 @@
 import Card from '@components/card.js';
 import Form from '@components/form.js';
 import MoreButton from '@components/moreButton.js';
-import {render, RenderPosition, createElement} from '@components/utils.js';
+import {render, RenderPosition, createElement, Buttons} from '@components/utils.js';
 
 const SHOWING_TASKS_COUNT_ON_START = 8;
 const SHOWING_TASKS_COUNT_BY_BUTTON = 8;
@@ -23,10 +23,7 @@ export default class Cards {
   }
 
   init() {
-
-    // render(this._element, this._form.getElement(), RenderPosition.BEFOREEND);
     this.renderCards(this._data.slice(0, this._showingTasksCount));
-
     this._moreButton = new MoreButton();
     render(this._element.parentNode, this._moreButton.getElement(), RenderPosition.BEFOREEND);
 
@@ -74,6 +71,17 @@ export default class Cards {
 
             this._form = null;
             this._activeCard = null;
+          }
+        });
+
+        window.addEventListener(`keydown`, (evt) => {
+          if (evt.key === Buttons.ESC) {
+            if (this._form && this._activeCard) {
+              this._form._element.parentNode.replaceChild(this._activeCard._element, this._form._element);
+
+              this._form = null;
+              this._activeCard = null;
+            }
           }
         });
       });
