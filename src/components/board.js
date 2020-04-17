@@ -2,11 +2,11 @@ import {createElement} from '@components/utils.js';
 
 const createTemplate = () => {
   return (
-    `<button class="load-more" type="button">load more</button>`
+    `<section class="board container"></section>`
   );
 };
 
-export default class MoreButton {
+export default class Board {
   constructor() {
     this._element = null;
   }
@@ -25,9 +25,5 @@ export default class MoreButton {
 
   removeElement() {
     this._element = null;
-  }
-
-  hide() {
-    this._element.classList.add(`visually-hidden`);
   }
 }

@@ -1,51 +1,8 @@
-import {render, formatTime} from '@components/utils.js';
+import {formatTime, createElement} from '@components/utils.js';
 import {MONTH_NAMES, DAYS, COLORS} from '@components/constants.js';
 
-const createColorsMarkup = (colors, currentColor) => {
-  return colors
-    .map((color, index) => {
-      return (
-        `<input
-          type="radio"
-          id="color-${color}-${index}"
-          class="card__color-input card__color-input--${color} visually-hidden"
-          name="color"
-          value="${color}"
-          ${currentColor === color ? `checked` : ``}
-        />
-        <label
-          for="color-${color}--${index}"
-          class="card__color card__color--${color}"
-          >${color}</label
-        >`
-      );
-    })
-    .join(`\n`);
-};
-
-const createRepeatingDaysMarkup = (days, repeatingDays) => {
-  return days
-    .map((day, index) => {
-      const isChecked = repeatingDays[day];
-      return (
-        `<input
-          class="visually-hidden card__repeat-day-input"
-          type="checkbox"
-          id="repeat-${day}-${index}"
-          name="repeat"
-          value="${day}"
-          ${isChecked ? `checked` : ``}
-        />
-        <label class="card__repeat-day" for="repeat-${day}-${index}"
-          >${day}</label
-        >`
-      );
-    })
-    .join(`\n`);
-};
-
-const renderForm = function (task, container) {
-  const {description, dueDate, color, repeatingDays} = task;
+const createTemplate = function (data) {
+  const {description, dueDate, color, repeatingDays} = data;
 
   const isExpired = dueDate instanceof Date && dueDate < Date.now();
   const isDateShowing = !!dueDate;
@@ -57,13 +14,75 @@ const renderForm = function (task, container) {
   const repeatClass = isRepeatingTask ? `card--repeat` : ``;
 
   const deadlineClass = isExpired ? `card--deadline` : ``;
+  const dateShowToggle = isDateShowing ? `yes` : `no`;
+  const deadlineInput = isDateShowing ? `<fieldset class="card__date-deadline">
+  <label class="card__input-deadline-wrap">
+    <input
+      class="card__date"
+      type="text"
+      placeholder=""
+      name="date"
+      value="${date} ${time}"
+    />
+  </label>
+</fieldset>` : ``;
+
+  const repeatingShowToggle = isRepeatingTask ? `yes` : `no`;
+
+  const createColorsMarkup = (colors, currentColor) => {
+    return colors
+      .map((it, index) => {
+        return (
+          `<input
+            type="radio"
+            id="color-${it}-${index}"
+            class="card__color-input card__color-input--${it} visually-hidden"
+            name="color"
+            value="${it}"
+            ${currentColor === it ? `checked` : ``}
+          />
+          <label
+            for="color-${it}--${index}"
+            class="card__color card__color--${it}"
+            >${it}</label
+          >`
+        );
+      })
+      .join(`\n`);
+  };
+
+  const createRepeatingDaysMarkup = (days) => {
+    return days
+      .map((day, index) => {
+        const isChecked = repeatingDays[day];
+        return (
+          `<input
+            class="visually-hidden card__repeat-day-input"
+            type="checkbox"
+            id="repeat-${day}-${index}"
+            name="repeat"
+            value="${day}"
+            ${isChecked ? `checked` : ``}
+          />
+          <label class="card__repeat-day" for="repeat-${day}-${index}"
+            >${day}</label
+          >`
+        );
+      })
+      .join(`\n`);
+  };
 
   const colorsMarkup = createColorsMarkup(COLORS, color);
-  const repeatingDaysMarkup = createRepeatingDaysMarkup(DAYS, repeatingDays);
+  const repeatingDaysMarkup = createRepeatingDaysMarkup(DAYS);
 
-  const createTemplate = () => {
-    return (
-      `<article class="card card--edit card--${color} card--${repeatClass} ${deadlineClass}">
+  const repeatingDaysFieldset = isRepeatingTask ? `<fieldset class="card__repeat-days">
+  <div class="card__repeat-days-inner">
+    ${repeatingDaysMarkup}
+  </div>
+</fieldset>` : ``;
+
+  return (
+    `<article class="card card--edit card--${color} card--${repeatClass} ${deadlineClass}">
       <form class="card__form" method="get">
         <div class="card__inner">
           <div class="card__color-bar">
@@ -86,30 +105,16 @@ const renderForm = function (task, container) {
             <div class="card__details">
               <div class="card__dates">
                 <button class="card__date-deadline-toggle" type="button">
-                date: <span class="card__date-status">${isDateShowing ? `yes` : `no`}</span>
+                date: <span class="card__date-status">${dateShowToggle}</span>
               </button>
 
-              ${isDateShowing ? `<fieldset class="card__date-deadline">
-                                  <label class="card__input-deadline-wrap">
-                                    <input
-                                      class="card__date"
-                                      type="text"
-                                      placeholder=""
-                                      name="date"
-                                      value="${date} ${time}"
-                                    />
-                                  </label>
-                                </fieldset>` : ``}
+              ${deadlineInput}
 
                                 <button class="card__repeat-toggle" type="button">
-                                repeat:<span class="card__repeat-status">${isRepeatingTask ? `yes` : `no`}</span>
+                                repeat:<span class="card__repeat-status">${repeatingShowToggle}</span>
                               </button>
 
-                              ${isRepeatingTask ? `<fieldset class="card__repeat-days">
-                                                  <div class="card__repeat-days-inner">
-                                                    ${repeatingDaysMarkup}
-                                                  </div>
-                                                </fieldset>` : ``}
+                              ${repeatingDaysFieldset}
               </div>
             </div>
 
@@ -128,10 +133,28 @@ const renderForm = function (task, container) {
         </div>
       </form>
     </article>`
-    );
-  };
-
-  render(container, createTemplate(), `beforeend`);
+  );
 };
 
-export {renderForm};
+export default class Form {
+  constructor(data) {
+    this._element = null;
+    this._data = data;
+  }
+
+  getTemplate() {
+    return createTemplate(this._data);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
