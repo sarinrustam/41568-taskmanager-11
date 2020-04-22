@@ -36,13 +36,13 @@ export default class Sort extends AbstractComponent {
       evt.preventDefault();
 
       if (evt.target.tagName === !`A`) {
-        return
+        return;
       }
 
       const sortType = evt.target.dataset.sortType;
 
       if (this._currenSortType === sortType) {
-        return
+        return;
       }
 
       this._currenSortType = sortType;

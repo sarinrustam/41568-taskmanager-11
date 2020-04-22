@@ -1,27 +1,27 @@
-import {createElement} from '@src/utils/render.js'
+import {createElement} from '@src/utils/render.js';
 
 export default class AbstractComponent {
-    constructor() {
-        if (new.target === AbstractComponent) {
-            throw new Error(`Can't instantiate AbstractComponent, only concentrate one.`);
-        }
-
-        this._element = null;
+  constructor() {
+    if (new.target === AbstractComponent) {
+      throw new Error(`Can't instantiate AbstractComponent, only concentrate one.`);
     }
 
-    getTemplate() {
-        throw new Error(`Abstract method not implemented: getTemplate`);
-    }
+    this._element = null;
+  }
 
-    getElement() {
+  getTemplate() {
+    throw new Error(`Abstract method not implemented: getTemplate`);
+  }
+
+  getElement() {
     if (!this._element) {
-        this._element = createElement(this.getTemplate());
+      this._element = createElement(this.getTemplate());
     }
 
     return this._element;
-    }
+  }
 
-    removeElement() {
-        this._element = null;
-    }
+  removeElement() {
+    this._element = null;
+  }
 }

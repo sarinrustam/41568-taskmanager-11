@@ -78,7 +78,7 @@ export default class Card extends AbstractComponent {
 
   setEditButtonClickHandler(handler) {
     const edit = this.getElement().querySelector(`.card__btn--edit`);
-    
+
     edit.addEventListener(`click`, handler);
   }
 }

@@ -1,5 +1,4 @@
 import AbstractComponent from '@components/abstract-component.js';
-import {render, RenderPosition, replace, remove} from '@src/utils/render.js';
 
 const createTemplate = () => {
   return (
