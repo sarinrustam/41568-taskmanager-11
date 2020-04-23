@@ -78,7 +78,25 @@ export default class BoardController {
     this._moreButton = new MoreButton();
   }
 
-  render(cards) {
+  _renderContainer(cards) {
+    const container = this._container.getElement();
+
+    const isAllTasksArchived = cards.every((card) => card.isArchive);
+
+    if (isAllTasksArchived) {
+      render(container, this._message, RenderPosition.BEFOREEND);
+    }
+
+    render(container, this._sort, RenderPosition.BEFOREEND);
+    render(container, this._cards, RenderPosition.BEFOREEND);
+  }
+
+  _renderContent(cards) {
+    const container = this._container.getElement();
+    const cardListElement = this._cards.getElement();
+
+    let showingTasksCount = SHOWING_TASKS_COUNT_ON_START;
+
     const renderLoadMoreButton = () => {
       if (showingTasksCount >= cards.length) {
         return;
@@ -99,21 +117,6 @@ export default class BoardController {
       });
     };
 
-    const container = this._container.getElement();
-
-    const isAllTasksArchived = cards.every((card) => card.isArchive);
-
-    if (isAllTasksArchived) {
-      render(container, this._message, RenderPosition.BEFOREEND);
-    }
-
-    render(container, this._sort, RenderPosition.BEFOREEND);
-    render(container, this._cards, RenderPosition.BEFOREEND);
-
-    const cardListElement = this._cards.getElement();
-
-    let showingTasksCount = SHOWING_TASKS_COUNT_ON_START;
-
     renderCards(cardListElement, cards.slice(0, showingTasksCount));
 
     renderLoadMoreButton();
@@ -129,5 +132,10 @@ export default class BoardController {
 
       renderLoadMoreButton();
     });
+  }
+
+  render(cards) {
+    this._renderContainer(cards);
+    this._renderContent(cards);
   }
 }
