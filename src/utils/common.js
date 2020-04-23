@@ -7,11 +7,6 @@ export const Buttons = {
   ESC: `Escape`,
 };
 
-export const RenderPosition = {
-  AFTERBEGIN: `afterbegin`,
-  BEFOREEND: `beforeend`
-};
-
 export const getRandomNumber = function () {
   return Math.floor(Math.random() * MULTIPLIER);
 };
@@ -24,24 +19,4 @@ export const formatTime = (date) => {
   const hours = castTimeFormat(date.getHours() % 12);
   const minutes = castTimeFormat(date.getMinutes());
   return `${hours}:${minutes}`;
-};
-
-export const createElement = (template) => {
-  const element = document.createElement(`div`);
-
-  element.innerHTML = template;
-
-  return element.firstChild;
-};
-
-export const render = function (container, element, place) {
-  switch (place) {
-    case RenderPosition.AFTERBEGIN:
-      container.prepend(element);
-      break;
-
-    case RenderPosition.BEFOREEND:
-      container.append(element);
-      break;
-  }
 };

@@ -1,4 +1,5 @@
-import {formatTime, createElement} from '@components/utils.js';
+import {formatTime} from '@src/utils/common.js';
+import AbstractComponent from '@components/abstract-component.js';
 import {MONTH_NAMES, DAYS, COLORS} from '@components/constants.js';
 
 const createTemplate = function (data) {
@@ -136,9 +137,10 @@ const createTemplate = function (data) {
   );
 };
 
-export default class Form {
+export default class Form extends AbstractComponent {
   constructor(data) {
-    this._element = null;
+    super();
+
     this._data = data;
   }
 
@@ -146,15 +148,9 @@ export default class Form {
     return createTemplate(this._data);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
+  setSubmitHandler(handler) {
+    const form = this.getElement().querySelector(`form`);
 
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
+    form.addEventListener(`submit`, handler);
   }
 }

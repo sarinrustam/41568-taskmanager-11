@@ -53,7 +53,7 @@ const generateCard = () => {
     repeatingDays: dueDate ? DefaultRepeatingDays : generateRepeatingDays(),
     color: getRandomArrayItem(COLORS),
     isArchive: Math.random() > 0.5,
-    isFavorite: Math.random() > 0.5,
+    isFavorite: Math.random() > 0.5
   };
 };
 
