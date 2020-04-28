@@ -9,8 +9,12 @@ const SHOWING_TASKS_COUNT_ON_START = 8;
 const SHOWING_TASKS_COUNT_BY_BUTTON = 8;
 
 const renderCards = (cardListElement, cards) => {
-  cards.forEach((card) => {
-    renderCard(cardListElement, card);
+  return cards.map((card) => {
+    const cardController = new CardController(cardListElement);
+
+    cardController.render(card);
+
+    return cardController;
   });
 };
 
@@ -38,6 +42,7 @@ export default class BoardController {
     this._container = container;
 
     this._cards = [];
+    this._showedCardControllers = [];
     this._showingCardsCount = SHOWING_TASKS_COUNT_ON_START;
     this._sortComponent = new Sort();
     this._messageComponent = new Message();
@@ -64,10 +69,10 @@ export default class BoardController {
   }
 
   _renderContent(cards) {
-    // const container = this._container.getElement();
     const cardListElement = this._cardsComponent.getElement();
 
-    renderCards(cardListElement, cards.slice(0, this._showingCardsCount));
+    const newCards = renderCards(cardListElement, this._cards.slice(0, this._showingCardsCount));
+    this._showedCardControllers = this._showedCardControllers.concat(newCards);
 
     this._renderLoadMoreButton();
   }
@@ -85,15 +90,16 @@ export default class BoardController {
     render(container, this._moreButtonComponent, RenderPosition.BEFOREEND);
 
     this._moreButtonComponent.setClickHandler(() => {
-      const prevTasksCount = this._showingCardsCount;
+      const prevCardsCount = this._showingCardsCount;
 
       const cardListElement = this._cardsComponent.getElement();
 
       this._showingCardsCount = this._showingCardsCount + SHOWING_TASKS_COUNT_BY_BUTTON;
 
-      // const sortedCards = getSortedCards(cards, this._sort.getSortType(), prevTasksCount, showingTasksCount);
+      const sortedCards = getSortedCards(this._cards, this._sortComponent.getSortType(), prevCardsCount, this._showingCardsCount);
+      const newCards = renderCards(cardListElement, sortedCards);
 
-      renderCards(cardListElement, sortedCards.slice(0, this._showingCardsCount));
+      this._showedCardControllers = this._showedCardControllers.concat(newCards);
 
       if (this._showingCardsCount >= this._cards.length) {
         remove(this._moreButtonComponent);
@@ -109,7 +115,8 @@ export default class BoardController {
 
     cardListElement.innerHTML = ``;
 
-    renderCards(cardListElement, sortedCards);
+    const newCards = renderCards(cardListElement, sortedCards);
+    this._showedCardControllers = newCards;
 
     renderLoadMoreButton();
   }

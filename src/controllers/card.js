@@ -6,36 +6,44 @@ export default class CardController {
   constructor(container) {
     this._container = container;
 
-    this._card = null;
-    this._form = null;
+    this._cardComponent = null;
+    this._formComponent = null;
 
     this._onEscKeyDown = this._onEscKeyDown.bind(this);
   }
 
   render(card) {
-    this._card = new Card(card);
-    this._form = new Form(card);
+    this._cardComponent = new Card(card);
+    this._formComponent = new Form(card);
 
     this._card.setEditButtonClickHandler(() => {
       this._replaceCardToForm();
       document.addEventListener(`keydown`, this._onEscKeyDown);
     });
 
-    this._form.setSubmitHandler((evt) => {
+    this._cardComponent.setArchiveButtonClickHandler(() => {
+
+    });
+
+    this._cardComponent.setFavoritesButtonClickHandler(() => {
+
+    });
+
+    this._formComponent.setSubmitHandler((evt) => {
       evt.preventDefault();
       this._replaceFormToCard();
     });
 
-    render(this._container, this._card, RenderPosition.BEFOREEND);
+    render(this._container, this._cardComponent, RenderPosition.BEFOREEND);
   }
 
   _replaceFormToCard() {
     document.removeEventListener(`keydown`, this._onEscKeyDown);
-    replace(this._card, this._form);
+    replace(this._cardComponent, this._formComponent);
   }
 
   _replaceCardToForm() {
-    replace(this._form, this._card);
+    replace(this._formComponent, this._cardComponent);
   }
 
   _onEscKeyDown(evt) {
