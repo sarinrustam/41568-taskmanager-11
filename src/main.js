@@ -17,7 +17,6 @@ const init = function () {
   const board = new Board();
   const menu = new Menu();
   const filter = new Filter(filters);
-  
   render(siteMainSection, menu, RenderPosition.BEFOREEND);
   render(siteMain, filter, RenderPosition.BEFOREEND);
   render(siteMain, board, RenderPosition.BEFOREEND);

@@ -3,7 +3,7 @@ import Sort, {SortType} from '@components/sort.js';
 import Message from '@components/message.js';
 import MoreButton from '@components/moreButton.js';
 import {render, RenderPosition, remove} from '@src/utils/render.js';
-import CardController from '@components/controllers/card.js';
+import CardController from '@src/controllers/card.js';
 
 const SHOWING_TASKS_COUNT_ON_START = 8;
 const SHOWING_TASKS_COUNT_BY_BUTTON = 8;
@@ -53,12 +53,10 @@ export default class BoardController {
     this._onSortTypeChange = this._onSortTypeChange.bind(this);
     this._onViewChange = this._onViewChange.bind(this);
 
-    this._sort.setSortTypeChangeHandler(this._onSortTypeChange);
+    this._sortComponent.setSortTypeChangeHandler(this._onSortTypeChange);
   }
 
-  _renderContainer(cards) {
-    this._cards = cards;
-
+  _renderContainer() {
     const container = this._container.getElement();
 
     const isAllTasksArchived = this._cards.every((card) => card.isArchive);
@@ -71,7 +69,7 @@ export default class BoardController {
     render(container, this._cardsComponent, RenderPosition.BEFOREEND);
   }
 
-  _renderContent(cards) {
+  _renderContent() {
     const cardListElement = this._cardsComponent.getElement();
 
     const newCards = renderCards(cardListElement, this._cards.slice(0, this._showingCardsCount), this._onDataChange, this._onViewChange);
@@ -81,8 +79,9 @@ export default class BoardController {
   }
 
   render(cards) {
-    this._renderContainer(cards);
-    this._renderContent(cards);
+    this._cards = cards;
+    this._renderContainer();
+    this._renderContent();
   }
 
   _renderLoadMoreButton() {
@@ -126,7 +125,7 @@ export default class BoardController {
     this._showedCardControllers.forEach((it) => it.setDefaultView());
   }
 
-  _onSortTypeChange() {
+  _onSortTypeChange(sortType) {
     this._showingCardsCount = SHOWING_TASKS_COUNT_BY_BUTTON;
 
     const sortedCards = getSortedCards(this._cards, sortType, 0, this._showingCardsCount);

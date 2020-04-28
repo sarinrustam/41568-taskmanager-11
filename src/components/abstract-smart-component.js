@@ -1,4 +1,4 @@
-import AbstractComponent from '@components/abstract-components.js';
+import AbstractComponent from '@components/abstract-component.js';
 
 export default class AbstractSmartComponent extends AbstractComponent {
   recoveryListeners() {

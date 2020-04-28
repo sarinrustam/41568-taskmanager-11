@@ -26,7 +26,7 @@ export default class CardController {
     this._cardComponent = new Card(card);
     this._formComponent = new Form(card);
 
-    this._card.setEditButtonClickHandler(() => {
+    this._cardComponent.setEditButtonClickHandler(() => {
       this._replaceCardToForm();
       document.addEventListener(`keydown`, this._onEscKeyDown);
     });

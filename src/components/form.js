@@ -142,7 +142,7 @@ export default class Form extends AbstractSmartComponent {
   }
 
   getTemplate() {
-    return createTemplate(this._task, {
+    return createTemplate(this._data, {
       isDateShowing: this._isDateShowing,
       isRepeatingTask: this._isRepeatingTask,
       activeRepeatingDays: this._activeRepeatingDays,
