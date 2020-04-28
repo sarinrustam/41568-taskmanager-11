@@ -3,8 +3,9 @@ import Form from '@components/form.js';
 import {render, replace, RenderPosition} from '@src/utils/render.js';
 
 export default class CardController {
-  constructor(container) {
+  constructor(container, onDataChange) {
     this._container = container;
+    this._onDataChange = onDataChange;
 
     this._cardComponent = null;
     this._formComponent = null;
@@ -22,11 +23,15 @@ export default class CardController {
     });
 
     this._cardComponent.setArchiveButtonClickHandler(() => {
-
+      this._onDataChange(this, card, Object.assign({}, card, {
+        isArchive: !card.isArchive,
+      }));
     });
 
     this._cardComponent.setFavoritesButtonClickHandler(() => {
-
+      this._onDataChange(this, card, Object.assign({}, card, {
+        isFavorite: !card.isFavorite,
+      }));
     });
 
     this._formComponent.setSubmitHandler((evt) => {

@@ -1,5 +1,5 @@
 import {formatTime} from '@src/utils/common.js';
-import AbstractComponent from '@components/abstract-component.js';
+import AbstractSmartComponent from '@components/abstract-smart-component.js';
 import {MONTH_NAMES, DAYS, COLORS} from '@components/constants.js';
 
 const createTemplate = function (data) {
@@ -137,20 +137,61 @@ const createTemplate = function (data) {
   );
 };
 
-export default class Form extends AbstractComponent {
+export default class Form extends AbstractSmartComponent {
   constructor(data) {
     super();
 
     this._data = data;
+    this._submitHandler = null;
+
+    this._subscribeOnEvents();
   }
 
   getTemplate() {
     return createTemplate(this._data);
   }
 
+  recoveryListeners() {
+    this.setSubmitHandler(this._submitHandler);
+    this._subscribeOnEvents();
+  }
+
+  rerender() {
+    super.rerender();
+  }
+
   setSubmitHandler(handler) {
     const form = this.getElement().querySelector(`form`);
 
     form.addEventListener(`submit`, handler);
+
+    this._submitHandler = handler;
+  }
+
+  _subscribeOnEvents() {
+    const element = this.getElement();
+
+    element.querySelector(`.card__date-deadline-toggle`)
+      .addEventListener(`click`, () => {
+        this._isDateShowing = !this._isDateShowing;
+
+        this.rerender();
+      });
+
+    element.querySelector(`.card__repeat-toggle`)
+      .addEventListener(`click`, () => {
+        this._isRepeatingTask = !this._isRepeatingTask;
+
+        this.rerender();
+      });
+
+    const repeatDays = element.querySelector(`.card__repeat-days`);
+    if (repeatDays) {
+      repeatDays.addEventListener(`change`, (evt) => {
+        this._activeRepeatingDays[evt.target.value] = evt.target.checked;
+
+        this.rerender();
+      });
+    }
   }
 }

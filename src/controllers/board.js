@@ -8,9 +8,9 @@ import CardController from '@components/controllers/card.js';
 const SHOWING_TASKS_COUNT_ON_START = 8;
 const SHOWING_TASKS_COUNT_BY_BUTTON = 8;
 
-const renderCards = (cardListElement, cards) => {
+const renderCards = (cardListElement, cards, onDataChange) => {
   return cards.map((card) => {
-    const cardController = new CardController(cardListElement);
+    const cardController = new CardController(cardListElement, onDataChange);
 
     cardController.render(card);
 
@@ -49,7 +49,9 @@ export default class BoardController {
     this._cardsComponent = new Cards();
     this._moreButtonComponent = new MoreButton();
 
+    this._onDataChange = this._onDataChange.bind(this);
     this._onSortTypeChange = this._onSortTypeChange.bind(this);
+
     this._sort.setSortTypeChangeHandler(this._onSortTypeChange);
   }
 
@@ -71,7 +73,7 @@ export default class BoardController {
   _renderContent(cards) {
     const cardListElement = this._cardsComponent.getElement();
 
-    const newCards = renderCards(cardListElement, this._cards.slice(0, this._showingCardsCount));
+    const newCards = renderCards(cardListElement, this._cards.slice(0, this._showingCardsCount), this._onDataChange);
     this._showedCardControllers = this._showedCardControllers.concat(newCards);
 
     this._renderLoadMoreButton();
@@ -97,7 +99,7 @@ export default class BoardController {
       this._showingCardsCount = this._showingCardsCount + SHOWING_TASKS_COUNT_BY_BUTTON;
 
       const sortedCards = getSortedCards(this._cards, this._sortComponent.getSortType(), prevCardsCount, this._showingCardsCount);
-      const newCards = renderCards(cardListElement, sortedCards);
+      const newCards = renderCards(cardListElement, sortedCards, this._onDataChange);
 
       this._showedCardControllers = this._showedCardControllers.concat(newCards);
 
@@ -105,6 +107,18 @@ export default class BoardController {
         remove(this._moreButtonComponent);
       }
     });
+  }
+
+  _onDataChange(cardController, oldData, newData) {
+    const index = this._cards.findIndex((it) => it === oldData);
+
+    if (index === -1) {
+      return;
+    }
+
+    this._cards = [].concat(this._cards.slice(0, index), newData, this._cards.slice(index + 1));
+
+    cardController.render(this._cards[index]);
   }
 
   _onSortTypeChange() {
@@ -115,7 +129,7 @@ export default class BoardController {
 
     cardListElement.innerHTML = ``;
 
-    const newCards = renderCards(cardListElement, sortedCards);
+    const newCards = renderCards(cardListElement, sortedCards, this._onDataChange);
     this._showedCardControllers = newCards;
 
     renderLoadMoreButton();
