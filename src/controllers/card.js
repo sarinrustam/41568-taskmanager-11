@@ -2,11 +2,17 @@ import Card from '@components/card.js';
 import Form from '@components/form.js';
 import {render, replace, RenderPosition} from '@src/utils/render.js';
 
+const Mode = {
+  DEFAULT: `default`,
+  EDIT: `edit`,
+};
+
 export default class CardController {
-  constructor(container, onDataChange) {
+  constructor(container, onDataChange, onViewChange) {
     this._container = container;
     this._onDataChange = onDataChange;
-
+    this._onViewChange = onViewChange;
+    this._mode = Mode.DEFAULT;
     this._cardComponent = null;
     this._formComponent = null;
 
@@ -14,6 +20,9 @@ export default class CardController {
   }
 
   render(card) {
+    const oldCardComponent = this._cardComponent;
+    const oldFormComponent = this._formComponent;
+
     this._cardComponent = new Card(card);
     this._formComponent = new Form(card);
 
@@ -39,16 +48,32 @@ export default class CardController {
       this._replaceFormToCard();
     });
 
-    render(this._container, this._cardComponent, RenderPosition.BEFOREEND);
+    // render(this._container, this._cardComponent, RenderPosition.BEFOREEND);
+    if (oldFormComponent && oldCardComponent) {
+      replace(this._taskComponent, oldCardComponent);
+      replace(this._taskEditComponent, oldFormComponent);
+    } else {
+      render(this._container, this._cardComponent, RenderPosition.BEFOREEND);
+    }
+  }
+
+  setDefaultView() {
+    if (this._mode !== Mode.DEFAULT) {
+      this._replaceFormToCard();
+    }
   }
 
   _replaceFormToCard() {
     document.removeEventListener(`keydown`, this._onEscKeyDown);
+    this._formComponent.reset();
     replace(this._cardComponent, this._formComponent);
+    this._mode = Mode.DEFAULT;
   }
 
   _replaceCardToForm() {
+    this._onViewChange();
     replace(this._formComponent, this._cardComponent);
+    this._mode = Mode.EDIT;
   }
 
   _onEscKeyDown(evt) {

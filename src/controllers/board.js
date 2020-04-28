@@ -8,9 +8,9 @@ import CardController from '@components/controllers/card.js';
 const SHOWING_TASKS_COUNT_ON_START = 8;
 const SHOWING_TASKS_COUNT_BY_BUTTON = 8;
 
-const renderCards = (cardListElement, cards, onDataChange) => {
+const renderCards = (cardListElement, cards, onDataChange, onViewChange) => {
   return cards.map((card) => {
-    const cardController = new CardController(cardListElement, onDataChange);
+    const cardController = new CardController(cardListElement, onDataChange, onViewChange);
 
     cardController.render(card);
 
@@ -51,6 +51,7 @@ export default class BoardController {
 
     this._onDataChange = this._onDataChange.bind(this);
     this._onSortTypeChange = this._onSortTypeChange.bind(this);
+    this._onViewChange = this._onViewChange.bind(this);
 
     this._sort.setSortTypeChangeHandler(this._onSortTypeChange);
   }
@@ -73,7 +74,7 @@ export default class BoardController {
   _renderContent(cards) {
     const cardListElement = this._cardsComponent.getElement();
 
-    const newCards = renderCards(cardListElement, this._cards.slice(0, this._showingCardsCount), this._onDataChange);
+    const newCards = renderCards(cardListElement, this._cards.slice(0, this._showingCardsCount), this._onDataChange, this._onViewChange);
     this._showedCardControllers = this._showedCardControllers.concat(newCards);
 
     this._renderLoadMoreButton();
@@ -99,7 +100,7 @@ export default class BoardController {
       this._showingCardsCount = this._showingCardsCount + SHOWING_TASKS_COUNT_BY_BUTTON;
 
       const sortedCards = getSortedCards(this._cards, this._sortComponent.getSortType(), prevCardsCount, this._showingCardsCount);
-      const newCards = renderCards(cardListElement, sortedCards, this._onDataChange);
+      const newCards = renderCards(cardListElement, sortedCards, this._onDataChange, this._onViewChange);
 
       this._showedCardControllers = this._showedCardControllers.concat(newCards);
 
@@ -121,6 +122,10 @@ export default class BoardController {
     cardController.render(this._cards[index]);
   }
 
+  _onViewChange() {
+    this._showedCardControllers.forEach((it) => it.setDefaultView());
+  }
+
   _onSortTypeChange() {
     this._showingCardsCount = SHOWING_TASKS_COUNT_BY_BUTTON;
 
@@ -129,9 +134,9 @@ export default class BoardController {
 
     cardListElement.innerHTML = ``;
 
-    const newCards = renderCards(cardListElement, sortedCards, this._onDataChange);
+    const newCards = renderCards(cardListElement, sortedCards, this._onDataChange, this._onViewChange);
     this._showedCardControllers = newCards;
 
-    renderLoadMoreButton();
+    this._renderLoadMoreButton();
   }
 }
