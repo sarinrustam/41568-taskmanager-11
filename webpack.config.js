@@ -17,5 +17,13 @@ module.exports = {
       '@components': path.resolve(__dirname, 'src/components/'),
       '@src': path.resolve(__dirname, 'src/'),
     }
+  },
+  module: {
+    rules: [
+      {
+        test: /\.css$/i,
+        use: ['style-loader', 'css-loader'],
+      },
+    ],
   }
 };
