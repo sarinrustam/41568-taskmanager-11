@@ -3,8 +3,18 @@ import {MONTH_NAMES} from '@components/constants.js';
 import {formatTime} from '@src/utils/common.js';
 import AbstractComponent from '@components/abstract-component.js';
 
+const createButtonMarkup = (name, isActive = true) => {
+  return (
+    `<button
+      type="button"
+      class="card__btn card__btn--${name} ${isActive ? `` : `card__btn--disabled`}">
+      ${name}
+    </button>`
+  );
+};
+
 const createTemplate = function (data) {
-  const {description, dueDate, color, repeatingDays, isArchive, isFavorite} = data;
+  const {description, dueDate, color, repeatingDays} = data;
 
   const isExpired = dueDate instanceof Date && dueDate < Date.now();
   const isDateShowing = !!dueDate;
@@ -12,29 +22,21 @@ const createTemplate = function (data) {
   const date = isDateShowing ? `${dueDate.getDate()} ${MONTH_NAMES[dueDate.getMonth()]}` : ``;
   const time = isDateShowing ? formatTime(dueDate) : ``;
 
+  const editButton = createButtonMarkup(`edit`);
+  const archiveButton = createButtonMarkup(`archive`, !data.isArchive);
+  const favoritesButton = createButtonMarkup(`favorites`, !data.isFavorite);
+
   const repeatingClass = Object.values(repeatingDays).some((x) => x) ? `card--repeat` : ``;
   const deadlineClass = isExpired ? `card--deadline` : ``;
-
-  const disabledAchiveClass = isArchive ? `` : `card__btn--disabled`;
-  const disabledFavoriteClass = isFavorite ? `` : `card__btn--disabled`;
 
   return (
     `<article class="card card--${color} ${repeatingClass} ${deadlineClass}">
       <div class="card__form">
         <div class="card__inner">
           <div class="card__control">
-            <button type="button" class="card__btn card__btn--edit">
-              edit
-            </button>
-            <button type="button" class="card__btn card__btn--archive ${disabledAchiveClass}">
-              archive
-            </button>
-            <button
-              type="button"
-              class="card__btn card__btn--favorites ${disabledFavoriteClass}"
-            >
-              favorites
-            </button>
+            ${editButton}
+            ${archiveButton}
+            ${favoritesButton}
           </div>
 
           <div class="card__color-bar">
@@ -61,8 +63,7 @@ const createTemplate = function (data) {
           </div>
         </div>
       </div>
-    </article>`
-  );
+    </article>`);
 };
 
 export default class Card extends AbstractComponent {
@@ -80,5 +81,17 @@ export default class Card extends AbstractComponent {
     const edit = this.getElement().querySelector(`.card__btn--edit`);
 
     edit.addEventListener(`click`, handler);
+  }
+
+  setFavoritesButtonClickHandler(handler) {
+    const favorite = this.getElement().querySelector(`.card__btn--favorites`);
+
+    favorite.addEventListener(`click`, handler);
+  }
+
+  setArchiveButtonClickHandler(handler) {
+    const archive = this.getElement().querySelector(`.card__btn--archive`);
+
+    archive.addEventListener(`click`, handler);
   }
 }
