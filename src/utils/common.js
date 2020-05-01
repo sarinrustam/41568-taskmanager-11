@@ -1,4 +1,5 @@
-const CAST_FORMAT_NUMBER = 10;
+import moment from 'moment';
+
 const MULTIPLIER = 10;
 
 export const Buttons = {
@@ -11,12 +12,10 @@ export const getRandomNumber = function () {
   return Math.floor(Math.random() * MULTIPLIER);
 };
 
-export const castTimeFormat = (value) => {
-  return value < CAST_FORMAT_NUMBER ? `0${value}` : value.toString();
+export const formatTime = (date) => {
+  return moment(date).format(`hh:mm`);
 };
 
-export const formatTime = (date) => {
-  const hours = castTimeFormat(date.getHours() % 12);
-  const minutes = castTimeFormat(date.getMinutes());
-  return `${hours}:${minutes}`;
+export const formatDate = (date) => {
+  return moment(date).format(`DD MMMM`);
 };
