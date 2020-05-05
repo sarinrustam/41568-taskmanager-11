@@ -1,5 +1,7 @@
 import {formatTime, formatDate} from '@src/utils/common.js';
 import AbstractComponent from '@components/abstract-component.js';
+import {isOverdueDate} from '@src/utils/common.js';
+import {encode} from "he";
 
 const createButtonMarkup = (name, isActive = true) => {
   return (
@@ -12,13 +14,14 @@ const createButtonMarkup = (name, isActive = true) => {
 };
 
 const createTemplate = function (data) {
-  const {description, dueDate, color, repeatingDays} = data;
+  const {description: notSanitizedDescription, dueDate, color, repeatingDays} = data;
 
-  const isExpired = dueDate instanceof Date && dueDate < Date.now();
+  const isExpired = dueDate instanceof Date && isOverdueDate(dueDate, new Date());
   const isDateShowing = !!dueDate;
 
   const date = isDateShowing ? formatDate(dueDate) : ``;
   const time = isDateShowing ? formatTime(dueDate) : ``;
+  const description = encode(notSanitizedDescription);
 
   const editButton = createButtonMarkup(`edit`);
   const archiveButton = createButtonMarkup(`archive`, !data.isArchive);
