@@ -7,6 +7,7 @@ import {generateCards} from '@components/mock/card.js';
 import {render, RenderPosition} from '@src/utils/render.js';
 import BoardController from '@src/controllers/board.js';
 import CardsModel from '@src/models/cardsModel.js';
+import Statistics from '@components/statistics.js';
 
 const init = function () {
   const cardsData = generateCards();
@@ -29,11 +30,31 @@ const init = function () {
 
   boardController.render(cardsData);
 
+  const dateTo = new Date();
+  const dateFrom = (() => {
+    const d = new Date(dateTo);
+    d.setDate(d.getDate() - 7);
+    return d;
+  })();
+  const statisticsComponent = new Statistics({tasks: cardsModel, dateFrom, dateTo});
+  render(siteMainSection, statisticsComponent, RenderPosition.BEFOREEND);
+  statisticsComponent.hide();
+
   menu.setOnChange((menuItem) => {
     switch (menuItem) {
       case MenuItem.NEW_TASK:
         menu.setActiveItem(MenuItem.TASKS);
+        statisticsComponent.hide();
+        boardController.show();
         boardController.createCard();
+        break;
+      case MenuItem.STATISTICS:
+        boardController.hide();
+        statisticsComponent.show();
+        break;
+      case MenuItem.TASKS:
+        statisticsComponent.hide();
+        boardController.show();
         break;
     }
   });
