@@ -1,6 +1,6 @@
 
 import Menu, {MenuItem} from '@components/menu.js';
-import FilterController from '@controllers/filter.js';
+import FilterController from '@src/controllers/filter.js';
 import Board from '@components/board.js';
 // import {generateFilters} from '@components/mock/filter.js';
 import {generateCards} from '@components/mock/card.js';
@@ -19,12 +19,11 @@ const init = function () {
   const menu = new Menu();
   render(siteMainSection, menu, RenderPosition.BEFOREEND);
 
+  const filterController = new FilterController(siteMain, cardsModel);
+  filterController.render();
 
   const board = new Board();
   render(siteMain, board, RenderPosition.BEFOREEND);
-
-  const filterController = new FilterController(siteMainSection, cardsModel);
-  filterController.render();
 
   const boardController = new BoardController(board, cardsModel);
 

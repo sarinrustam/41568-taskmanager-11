@@ -80,8 +80,8 @@ export default class CardController {
     switch (mode) {
       case Mode.DEFAULT:
         if (oldFormComponent && oldCardComponent) {
-          replace(this._taskComponent, oldCardComponent);
-          replace(this._taskEditComponent, oldFormComponent);
+          replace(this._cardComponent, oldCardComponent);
+          replace(this._formComponent, oldFormComponent);
           this._replaceFormToCard();
         } else {
           render(this._container, this._cardComponent, RenderPosition.BEFOREEND);

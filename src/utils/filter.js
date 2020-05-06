@@ -34,7 +34,7 @@ export const getTasksInOneDay = (tasks, date) => {
   return tasks.filter((task) => isOneDay(task.dueDate, date));
 };
 
-export const getTasksByFilter = (tasks, filterType) => {
+export const getCardsByFilter = (tasks, filterType) => {
   const nowDate = new Date();
 
   switch (filterType) {

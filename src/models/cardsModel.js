@@ -1,4 +1,4 @@
-import {getTasksByFilter} from "@src/utils/filter.js";
+import {getCardsByFilter} from "@src/utils/filter.js";
 import {FilterType} from "@src/const.js";
 
 export default class CardsModel {
@@ -12,7 +12,7 @@ export default class CardsModel {
   }
 
   getCards() {
-    return getTasksByFilter(this._cards, this._activeFilterType);
+    return getCardsByFilter(this._cards, this._activeFilterType);
   }
 
   getCardsAll() {

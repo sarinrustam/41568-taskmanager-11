@@ -79,7 +79,7 @@ export default class BoardController {
     this._renderLoadMoreButton();
   }
 
-  createTask() {
+  createCard() {
     if (this._creatingCard) {
       return;
     }
@@ -89,12 +89,12 @@ export default class BoardController {
     this._creatingCard.render(EmptyTask, CardControllerMode.ADDING);
   }
 
-  _removeTasks() {
+  _removeCards() {
     this._showedCardControllers.forEach((taskController) => taskController.destroy());
     this._showedCardControllers = [];
   }
 
-  _renderCards() {
+  _renderCards(cards) {
     const cardListElement = this._cardsComponent.getElement();
 
     // const newCards = renderCards(cardListElement, this._cards.slice(0, this._showingCardsCount), this._onDataChange, this._onViewChange);
@@ -105,7 +105,7 @@ export default class BoardController {
   }
 
   _renderLoadMoreButton() {
-    remove(this._loadMoreButtonComponent);
+    remove(this._moreButtonComponent);
 
     if (this._showingCardsCount >= this._cardsModel.getCards().length) {
       return;
@@ -114,7 +114,7 @@ export default class BoardController {
     const container = this._container.getElement();
     render(container, this._moreButtonComponent, RenderPosition.BEFOREEND);
 
-    this._loadMoreButtonComponent.setClickHandler(this._onLoadMoreButtonClick);
+    this._moreButtonComponent.setClickHandler(this._onLoadMoreButtonClick);
   }
 
   _updateCards(count) {
@@ -147,10 +147,10 @@ export default class BoardController {
       this._cardsModel.removeCard(oldData.id);
       this._updateCards(this._showingCardsCount);
     } else {
-      const isSuccess = this._tasksModel.updateCard(oldData.id, newData);
+      const isSuccess = this._cardsModel.updateCards(oldData.id, newData);
 
       if (isSuccess) {
-        CardController.render(newData, CardControllerMode.DEFAULT);
+        cardController.render(newData, CardControllerMode.DEFAULT);
       }
     }
   }
@@ -185,6 +185,6 @@ export default class BoardController {
   }
 
   _onFilterChange() {
-    this._updateTasks(SHOWING_TASKS_COUNT_ON_START);
+    this._updateCards(SHOWING_TASKS_COUNT_ON_START);
   }
 }
