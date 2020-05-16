@@ -1,8 +1,10 @@
 import Card from '@components/card.js';
-import CardModel from '@src/controllers/card.js';
+import CardModel from '@src/models/card.js';
 import Form from '@components/form.js';
 import {render, replace, remove, RenderPosition} from '@src/utils/render.js';
 import {COLOR, DAYS} from '@src/const.js';
+
+const SHAKE_ANIMATION_TIMEOUT = 600;
 
 export const Mode = {
   ADDING: `adding`,
@@ -90,9 +92,19 @@ export default class CardController {
       const formData = this._formComponent.getData();
       const data = parseFormData(formData);
 
+      this._formComponent.setData({
+        saveButtonText: `Saving...`,
+      });
+
       this._onDataChange(this, card, data);
     });
-    this._formComponent.setDeleteButtonClickHandler(() => this._onDataChange(this, card, null));
+    this._formComponent.setDeleteButtonClickHandler(() => {
+      this._formComponent.setData({
+        deleteButtonText: `Deleting...`,
+      });
+
+      this._onDataChange(this, card, null);
+    });
 
     switch (mode) {
       case Mode.DEFAULT:
@@ -127,10 +139,24 @@ export default class CardController {
     document.removeEventListener(`keydown`, this._onEscKeyDown);
   }
 
+  shake() {
+    this._formComponent.getElement().style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+    this._cardComponent.getElement().style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+
+    setTimeout(() => {
+      this._formComponent.getElement().style.animation = ``;
+      this._cardComponent.getElement().style.animation = ``;
+
+      this._formComponent.setData({
+        saveButtonText: `Save`,
+        deleteButtonText: `Delete`,
+      });
+    }, SHAKE_ANIMATION_TIMEOUT);
+  }
+
   _replaceFormToCard() {
     document.removeEventListener(`keydown`, this._onEscKeyDown);
     this._formComponent.reset();
-    // replace(this._cardComponent, this._formComponent);
     if (document.contains(this._formComponent.getElement())) {
       replace(this._cardComponent, this._formComponent);
     }

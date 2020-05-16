@@ -152,6 +152,9 @@ export default class BoardController {
             this._showingCardsCount = this._showedCardControllers.length;
 
             this._renderLoadMoreButton();
+          })
+          .catch(() => {
+            cardController.shake();
           });
       }
     } else if (newData === null) {
@@ -161,7 +164,7 @@ export default class BoardController {
           this._updateCards(this._showingCardsCount);
         });
     } else {
-      this._api.updateCards(oldData.id, newData)
+      this._api.updateCard(oldData.id, newData)
         .then((cardModel) => {
           const isSuccess = this._cardsModel.updateCards(oldData.id, cardModel);
 
@@ -169,6 +172,9 @@ export default class BoardController {
             cardController.render(cardModel, CardControllerMode.DEFAULT);
             this._updateCards(this._showingCardsCount);
           }
+        })
+        .catch(() => {
+          cardController.shake();
         });
     }
   }
