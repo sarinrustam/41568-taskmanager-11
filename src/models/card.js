@@ -1,4 +1,4 @@
-export default class Card {
+export default class CardModel {
   constructor(data) {
     this.id = data[`id`];
     this.description = data[`description`] || ``;
@@ -9,11 +9,27 @@ export default class Card {
     this.isArchive = Boolean(data[`is_archived`]);
   }
 
+  toRAW() {
+    return {
+      "id": this.id,
+      "description": this.description,
+      "due_date": this.dueDate ? this.dueDate.toISOString() : null,
+      "repeating_days": this.repeatingDays,
+      "color": this.color,
+      "is_favorite": this.isFavorite,
+      "is_archived": this.isArchive,
+    };
+  }
+
   static parseCard(data) {
-    return new Card(data);
+    return new CardModel(data);
   }
 
   static parseCards(data) {
-    return data.map(Card.parseCard);
+    return data.map(CardModel.parseCard);
+  }
+
+  static clone(data) {
+    return new CardModel(data.toRAW());
   }
 }

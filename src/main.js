@@ -10,6 +10,7 @@ import Statistics from '@components/statistics.js';
 import {render, RenderPosition} from '@src/utils/render.js';
 
 const AUTHORIZATION = `Basic AsdfDSGSdgdsgdsgs=`;
+const END_POINT = `https://11.ecmascript.pages.academy/task-manager`;
 
 const init = function () {
   const dateTo = new Date();
@@ -19,7 +20,7 @@ const init = function () {
     return d;
   })();
 
-  const api = new API(AUTHORIZATION);
+  const api = new API(END_POINT, AUTHORIZATION);
   const cardsModel = new CardsModel();
 
   const siteMain = document.querySelector(`.main`);
@@ -28,7 +29,7 @@ const init = function () {
   const menu = new Menu();
   const statisticsComponent = new Statistics({tasks: cardsModel, dateFrom, dateTo});
   const board = new Board();
-  const boardController = new BoardController(board, cardsModel);
+  const boardController = new BoardController(board, cardsModel, api);
   const filterController = new FilterController(siteMain, cardsModel);
 
   render(siteMainSection, menu, RenderPosition.BEFOREEND);

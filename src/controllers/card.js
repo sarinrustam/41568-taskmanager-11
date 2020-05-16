@@ -1,12 +1,33 @@
 import Card from '@components/card.js';
+import CardModel from '@src/controllers/card.js';
 import Form from '@components/form.js';
 import {render, replace, remove, RenderPosition} from '@src/utils/render.js';
-import {COLOR} from '@src/const.js';
+import {COLOR, DAYS} from '@src/const.js';
 
 export const Mode = {
   ADDING: `adding`,
   DEFAULT: `default`,
   EDIT: `edit`,
+};
+
+const parseFormData = (formData) => {
+  const date = formData.get(`date`);
+  const repeatingDays = DAYS.reduce((acc, day) => {
+    acc[day] = false;
+    return acc;
+  }, {});
+
+  return new CardModel({
+    "description": formData.get(`text`),
+    "due_date": date ? new Date(date) : null,
+    "repeating_days": formData.getAll(`repeat`).reduce((acc, it) => {
+      acc[it] = true;
+      return acc;
+    }, repeatingDays),
+    "color": formData.get(`color`),
+    "is_favorite": false,
+    "is_done": false,
+  });
 };
 
 export const EmptyTask = {
@@ -52,31 +73,27 @@ export default class CardController {
     });
 
     this._cardComponent.setArchiveButtonClickHandler(() => {
-      this._onDataChange(this, card, Object.assign({}, card, {
-        isArchive: !card.isArchive,
-      }));
+      const newCard = CardModel.clone(card);
+      newCard.isArchive = !newCard.isArchive;
+
+      this._onDataChange(this, card, newCard);
     });
 
     this._cardComponent.setFavoritesButtonClickHandler(() => {
-      this._onDataChange(this, card, Object.assign({}, card, {
-        isFavorite: !card.isFavorite,
-      }));
+      const newCard = CardModel.clone(card);
+      newCard.isFavorite = !newCard.isFavorite;
+
+      this._onDataChange(this, card, newCard);
     });
 
     this._formComponent.setSubmitHandler(() => {
-      const data = this._formComponent.getData();
+      const formData = this._formComponent.getData();
+      const data = parseFormData(formData);
+
       this._onDataChange(this, card, data);
     });
     this._formComponent.setDeleteButtonClickHandler(() => this._onDataChange(this, card, null));
 
-    // render(this._container, this._cardComponent, RenderPosition.BEFOREEND);
-    // if (oldFormComponent && oldCardComponent) {
-    //   replace(this._taskComponent, oldCardComponent);
-    //   replace(this._taskEditComponent, oldFormComponent);
-    //   this._replaceFormToCard();
-    // } else {
-    //   render(this._container, this._cardComponent, RenderPosition.BEFOREEND);
-    // }
     switch (mode) {
       case Mode.DEFAULT:
         if (oldFormComponent && oldCardComponent) {

@@ -39,9 +39,10 @@ const getSortedCards = (cards, sortType, from, to) => {
 };
 
 export default class BoardController {
-  constructor(container, cardsModel) {
+  constructor(container, cardsModel, api) {
     this._container = container;
     this._cardsModel = cardsModel;
+    this._api = api;
 
     this._showedCardControllers = [];
     this._showingCardsCount = SHOWING_TASKS_COUNT_ON_START;
@@ -105,7 +106,6 @@ export default class BoardController {
   _renderCards(cards) {
     const cardListElement = this._cardsComponent.getElement();
 
-    // const newCards = renderCards(cardListElement, this._cards.slice(0, this._showingCardsCount), this._onDataChange, this._onViewChange);
     const newCards = renderCards(cardListElement, cards, this._onDataChange, this._onViewChange);
     this._showedCardControllers = this._showedCardControllers.concat(newCards);
 
@@ -155,11 +155,15 @@ export default class BoardController {
       this._cardsModel.removeCard(oldData.id);
       this._updateCards(this._showingCardsCount);
     } else {
-      const isSuccess = this._cardsModel.updateCards(oldData.id, newData);
+      this._api.updateCards(oldData.id, newData)
+        .then((cardModel) => {
+          const isSuccess = this._cardsModel.updateCards(oldData.id, cardModel);
 
-      if (isSuccess) {
-        cardController.render(newData, CardControllerMode.DEFAULT);
-      }
+          if (isSuccess) {
+            cardController.render(cardModel, CardControllerMode.DEFAULT);
+            this._updateCards(this._showingCardsCount);
+          }
+        });
     }
   }
 

@@ -1,16 +1,55 @@
 import Card from '@src/models/card.js';
 
+const Method = {
+  GET: `GET`,
+  POST: `POST`,
+  PUT: `PUT`,
+  DELETE: `DELETE`
+};
+
+const CodesErrors = {
+  200: `200`,
+  300: `300`,
+};
+
+const checkStatus = (response) => {
+  if (response.status >= CodesErrors[200] && response.status < CodesErrors[300]) {
+    return response;
+  } else {
+    throw new Error(`${response.status}: ${response.statusText}`);
+  }
+};
+
 export default class API {
-  constructor(authorization) {
+  constructor(endPoint, authorization) {
+    this._endPoint = endPoint;
     this._authorization = authorization;
   }
 
   getCards() {
-    const headers = new Headers();
-    headers.append(`Authorization`, this._authorization);
-
-    return fetch(`https://11.ecmascript.pages.academy/task-manager/tasks`, {headers})
+    return this._load({url: `tasks`})
       .then((response) => response.json())
       .then(Card.parseCards);
+  }
+
+  updateCard(id, data) {
+    return this._load({
+      url: `tasks/${id}`,
+      method: Method.PUT,
+      body: JSON.stringify(data.toRAW()),
+      headers: new Headers({"Content-Type": `application/json`})
+    })
+      .then((response) => response.json())
+      .then(Card.parseCard);
+  }
+
+  _load({url, method = Method.GET, body = null, headers = new Headers()}) {
+    headers.append(`Authorization`, this._authorization);
+
+    return fetch(`${this._endPoint}/${url}`, {method, body, headers})
+      .then(checkStatus)
+      .catch((err) => {
+        throw err;
+      });
   }
 }
