@@ -138,22 +138,28 @@ export default class BoardController {
         cardController.destroy();
         this._updateCards(this._showingCardsCount);
       } else {
-        this._cardsModel.addCard(newData);
-        cardController.render(newData, CardControllerMode.DEFAULT);
+        this._api.createCard(newData)
+          .then((cardModel) => {
+            this._cardsModel.addTask(cardModel);
+            cardController.render(cardModel, CardControllerMode.DEFAULT);
 
-        if (this._showingCardsCount % SHOWING_TASKS_COUNT_BY_BUTTON === 0) {
-          const destroyedCard = this._showedCardControllers.pop();
-          destroyedCard.destroy();
-        }
+            if (this._showingCardsCount % SHOWING_TASKS_COUNT_BY_BUTTON === 0) {
+              const destroyedCard = this._showedCardControllers.pop();
+              destroyedCard.destroy();
+            }
 
-        this._showedCardControllers = [].concat(cardController, this._showedCardControllers);
-        this._showingCardsCount = this._showedCardControllers.length;
+            this._showedCardControllers = [].concat(cardController, this._showedCardControllers);
+            this._showingCardsCount = this._showedCardControllers.length;
 
-        this._renderLoadMoreButton();
+            this._renderLoadMoreButton();
+          });
       }
     } else if (newData === null) {
-      this._cardsModel.removeCard(oldData.id);
-      this._updateCards(this._showingCardsCount);
+      this._api.deleteCard(oldData.id)
+        .then(() => {
+          this._cardsModel.removeTask(oldData.id);
+          this._updateCards(this._showingCardsCount);
+        });
     } else {
       this._api.updateCards(oldData.id, newData)
         .then((cardModel) => {

@@ -1,6 +1,6 @@
 import Card from '@src/models/card.js';
 
-const Method = {
+const Methods = {
   GET: `GET`,
   POST: `POST`,
   PUT: `PUT`,
@@ -35,7 +35,7 @@ export default class API {
   updateCard(id, data) {
     return this._load({
       url: `tasks/${id}`,
-      method: Method.PUT,
+      method: Methods.PUT,
       body: JSON.stringify(data.toRAW()),
       headers: new Headers({"Content-Type": `application/json`})
     })
@@ -43,7 +43,7 @@ export default class API {
       .then(Card.parseCard);
   }
 
-  _load({url, method = Method.GET, body = null, headers = new Headers()}) {
+  _load({url, method = Methods.GET, body = null, headers = new Headers()}) {
     headers.append(`Authorization`, this._authorization);
 
     return fetch(`${this._endPoint}/${url}`, {method, body, headers})
@@ -51,5 +51,20 @@ export default class API {
       .catch((err) => {
         throw err;
       });
+  }
+
+  createCard(card) {
+    return this._load({
+      url: `tasks`,
+      method: Methods.POST,
+      body: JSON.stringify(card.toRAW()),
+      headers: new Headers({"Content-Type": `application/json`})
+    })
+      .then((response) => response.json())
+      .then(Card.parseCard);
+  }
+
+  deleteCard(id) {
+    return this._load({url: `tasks/${id}`, method: Methods.DELETE});
   }
 }
