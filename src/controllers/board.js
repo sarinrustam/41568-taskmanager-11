@@ -138,7 +138,17 @@ export default class BoardController {
         cardController.destroy();
         this._updateCards(this._showingCardsCount);
       } else {
-        this._api.createCard(newData)
+        this._requestCreateCard(newData, CardController);
+      }
+    } else if (newData === null) {
+      this._requestDeleteCard(oldData);
+    } else {
+      this._requestUpdateCard(oldData, newData, cardController);
+    }
+  }
+
+  _requestCreateCard(newData, cardController) {
+    this._api.createCard(newData)
           .then((cardModel) => {
             this._cardsModel.addTask(cardModel);
             cardController.render(cardModel, CardControllerMode.DEFAULT);
@@ -156,15 +166,10 @@ export default class BoardController {
           .catch(() => {
             cardController.shake();
           });
-      }
-    } else if (newData === null) {
-      this._api.deleteCard(oldData.id)
-        .then(() => {
-          this._cardsModel.removeTask(oldData.id);
-          this._updateCards(this._showingCardsCount);
-        });
-    } else {
-      this._api.updateCard(oldData.id, newData)
+  }
+
+  _requestUpdateCard(oldData, newData, cardController) {
+    this._api.updateCard(oldData.id, newData)
         .then((cardModel) => {
           const isSuccess = this._cardsModel.updateCards(oldData.id, cardModel);
 
@@ -176,7 +181,14 @@ export default class BoardController {
         .catch(() => {
           cardController.shake();
         });
-    }
+  }
+
+  _requestDeleteCard(oldData) {
+    this._api.deleteCard(oldData.id)
+        .then(() => {
+          this._cardsModel.removeTask(oldData.id);
+          this._updateCards(this._showingCardsCount);
+        });
   }
 
   _onViewChange() {
@@ -204,7 +216,7 @@ export default class BoardController {
     this._renderCards(sortedCards);
 
     if (this._showingCardsCount >= sortedCards.length) {
-      remove(this._loadMoreButtonComponent);
+      remove(this._moreButtonComponent);
     }
   }
 
